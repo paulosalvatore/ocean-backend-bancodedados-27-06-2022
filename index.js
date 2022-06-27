@@ -48,14 +48,14 @@ async function main() {
   });
 
   // Endpoint Create - [POST] /herois
-  app.post("/herois", function (req, res) {
+  app.post("/herois", async function (req, res) {
     // Acessa o nome do herói no corpo da requisição
-    const item = req.body.nome;
+    const item = req.body;
 
-    // Insere o nome na lista
-    herois.push(item);
+    // Insere o objeto na collection
+    await collection.insertOne(item);
 
-    res.send("Item inserido com sucesso!");
+    res.send(item);
   });
 
   // Endpoint Update - [PUT] /herois/:id
