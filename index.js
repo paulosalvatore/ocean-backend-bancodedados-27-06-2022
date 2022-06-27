@@ -39,10 +39,10 @@ async function main() {
   });
 
   // Endpoint Read by ID - [GET] /herois/:id
-  app.get("/herois/:id", function (req, res) {
+  app.get("/herois/:id", async function (req, res) {
     const id = req.params.id;
 
-    const item = herois[id - 1];
+    const item = await collection.findOne({ _id: new ObjectId(id) });
 
     res.send(item);
   });
