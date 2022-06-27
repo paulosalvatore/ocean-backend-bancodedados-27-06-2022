@@ -59,17 +59,22 @@ async function main() {
   });
 
   // Endpoint Update - [PUT] /herois/:id
-  app.put("/herois/:id", function (req, res) {
+  app.put("/herois/:id", async function (req, res) {
     // Obtemos o ID pela rota
     const id = req.params.id;
 
-    // Pegamos o nome que foi enviado no corpo da requisição
-    const item = req.body.nome;
+    // Pegamos o objeto que foi enviado no corpo da requisição
+    const item = req.body;
 
-    // Atualizamos a lista, na posição id - 1, pelo novo item
-    herois[id - 1] = item;
+    // Atualizamos a collection, usando o ID, colocando o novo item
+    await collection.updateOne(
+      // Filtro
+      { _id: new ObjectId(id) },
+      // Operação de atualização
+      { $set: item }
+    );
 
-    res.send("Item atualizado com sucesso.");
+    res.send(item);
   });
 
   // Endpoint Delete - [DELETE] /herois/:id
