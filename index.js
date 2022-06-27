@@ -78,12 +78,12 @@ async function main() {
   });
 
   // Endpoint Delete - [DELETE] /herois/:id
-  app.delete("/herois/:id", function (req, res) {
+  app.delete("/herois/:id", async function (req, res) {
     // Obtemos o ID pela rota
     const id = req.params.id;
 
-    // Removemos a posição id - 1 da lista
-    delete herois[id - 1];
+    // Removemos o documento pelo ID
+    await collection.deleteOne({ _id: new ObjectId(id) });
 
     res.send("Item removido com sucesso.");
   });
