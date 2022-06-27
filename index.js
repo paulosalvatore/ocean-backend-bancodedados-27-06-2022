@@ -1,66 +1,89 @@
 const express = require("express");
-const app = express();
+const { MongoClient, ObjectId } = require("mongodb");
 
-// Informar para o Express que estamos usando JSON
-// no body das requisições
-app.use(express.json());
+const url = "mongodb://localhost:27017";
+const dbName = "ocean_bancodedados_27_06_2022";
 
-app.get("/", function (req, res) {
-  res.send("Hello World");
-});
+async function main() {
+  // Conexão com o banco de dados
 
-const herois = ["Mulher Maravilha", "Capitã Marvel", "Homem de Ferro"];
+  console.log("Conectando ao banco de dados...");
 
-// Endpoint Read All - [GET] /herois
-app.get("/herois", function (req, res) {
-  res.send(herois.filter(Boolean));
-});
+  const client = await MongoClient.connect(url);
 
-// Endpoint Read by ID - [GET] /herois/:id
-app.get("/herois/:id", function (req, res) {
-  const id = req.params.id;
+  const db = client.db(dbName);
 
-  const item = herois[id - 1];
+  const collection = db.collection("herois");
 
-  res.send(item);
-});
+  console.log("Conexão realizada com sucesso!");
 
-// Endpoint Create - [POST] /herois
-app.post("/herois", function (req, res) {
-  // Acessa o nome do herói no corpo da requisição
-  const item = req.body.nome;
+  // Aplicação Backend com Express
 
-  // Insere o nome na lista
-  herois.push(item);
+  const app = express();
 
-  res.send("Item inserido com sucesso!");
-});
+  // Informar para o Express que estamos usando JSON
+  // no body das requisições
+  app.use(express.json());
 
-// Endpoint Update - [PUT] /herois/:id
-app.put("/herois/:id", function (req, res) {
-  // Obtemos o ID pela rota
-  const id = req.params.id;
+  app.get("/", function (req, res) {
+    res.send("Hello World");
+  });
 
-  // Pegamos o nome que foi enviado no corpo da requisição
-  const item = req.body.nome;
+  const herois = ["Mulher Maravilha", "Capitã Marvel", "Homem de Ferro"];
 
-  // Atualizamos a lista, na posição id - 1, pelo novo item
-  herois[id - 1] = item;
+  // Endpoint Read All - [GET] /herois
+  app.get("/herois", function (req, res) {
+    res.send(herois.filter(Boolean));
+  });
 
-  res.send("Item atualizado com sucesso.");
-});
+  // Endpoint Read by ID - [GET] /herois/:id
+  app.get("/herois/:id", function (req, res) {
+    const id = req.params.id;
 
-// Endpoint Delete - [DELETE] /herois/:id
-app.delete("/herois/:id", function (req, res) {
-  // Obtemos o ID pela rota
-  const id = req.params.id;
+    const item = herois[id - 1];
 
-  // Removemos a posição id - 1 da lista
-  delete herois[id - 1];
+    res.send(item);
+  });
 
-  res.send("Item removido com sucesso.");
-});
+  // Endpoint Create - [POST] /herois
+  app.post("/herois", function (req, res) {
+    // Acessa o nome do herói no corpo da requisição
+    const item = req.body.nome;
 
-app.listen(3000, () =>
-  console.log("Servidor rodando em http://localhost:3000")
-);
+    // Insere o nome na lista
+    herois.push(item);
+
+    res.send("Item inserido com sucesso!");
+  });
+
+  // Endpoint Update - [PUT] /herois/:id
+  app.put("/herois/:id", function (req, res) {
+    // Obtemos o ID pela rota
+    const id = req.params.id;
+
+    // Pegamos o nome que foi enviado no corpo da requisição
+    const item = req.body.nome;
+
+    // Atualizamos a lista, na posição id - 1, pelo novo item
+    herois[id - 1] = item;
+
+    res.send("Item atualizado com sucesso.");
+  });
+
+  // Endpoint Delete - [DELETE] /herois/:id
+  app.delete("/herois/:id", function (req, res) {
+    // Obtemos o ID pela rota
+    const id = req.params.id;
+
+    // Removemos a posição id - 1 da lista
+    delete herois[id - 1];
+
+    res.send("Item removido com sucesso.");
+  });
+
+  app.listen(3000, () =>
+    console.log("Servidor rodando em http://localhost:3000")
+  );
+}
+
+main();
