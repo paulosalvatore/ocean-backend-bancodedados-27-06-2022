@@ -32,8 +32,10 @@ async function main() {
   const herois = ["Mulher Maravilha", "Capitã Marvel", "Homem de Ferro"];
 
   // Endpoint Read All - [GET] /herois
-  app.get("/herois", function (req, res) {
-    res.send(herois.filter(Boolean));
+  app.get("/herois", async function (req, res) {
+    const documentos = await collection.find().toArray();
+
+    res.send(documentos);
   });
 
   // Endpoint Read by ID - [GET] /herois/:id
